@@ -75,3 +75,12 @@ h3 {
 
 }
 
+@media (max-width: 1028px) {
+
+    .details-div {
+        padding-left: 10%;
+        padding-right: 10%;
+    }
+
+}
+
