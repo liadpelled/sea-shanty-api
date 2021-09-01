@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { text } = require("body-parser");
 const express = require("express");
 const mongoose = require("mongoose");
@@ -6,8 +7,7 @@ const app = express();
 app.use(express.static('public'));
 app.use(express.urlencoded({extended: true}));
 
-const dbURL = "mongodb+srv://admin-liad:tomato1993@cluster0.gwlov.mongodb.net/shanties2DB?retryWrites=true&w=majority"
-// const dbURL = "mongodb://localhost:27017/shantiesDB"
+const dbURL = "mongodb+srv://" + process.env.MONGOUSER + ":" + process.env.MONGOPW + "@cluster0.gwlov.mongodb.net/shanties2DB?retryWrites=true&w=majority"
 
 try {
     mongoose.connect(dbURL, {useNewUrlParser: true, useUnifiedTopology: true}, ()=>console.log("Mongoose is connected"));
