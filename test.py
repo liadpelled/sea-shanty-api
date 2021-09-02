@@ -1,7 +1,7 @@
 import re
 import json
 
-with open('shanties.json', 'r') as fp:
+with open('shanties_bs4_2.json', 'r') as fp:
     shanties_new = json.load(fp)
 
 new_shanties = []
@@ -9,8 +9,10 @@ new_shanties = []
 for name, lyrics in shanties_new.items():
     if not lyrics:
         continue
-    
-    new_shanties.append({'title': name, 'lyrics': lyrics})
+    if name > "Banks of the Sacramento":
+        new_shanties.append({'title': name, 'lyrics': lyrics[:(len(lyrics)//2)]})
+    else:
+        new_shanties.append({'title': name, 'lyrics': lyrics})
 
-with open('shanties_new_format.json', 'w') as fp:
+with open('shanties_bs4_2_new.json', 'w') as fp:
     json.dump(new_shanties, fp)

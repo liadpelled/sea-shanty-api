@@ -80,6 +80,8 @@ def add_to_lyrics(song_lyrics, row):
 
 def scrape_song_bs4(url: str, song_name: str):
 
+    print("Scraping song " + song_name + "...")
+
     song_lyrics = [[]]
     verse=0
 
@@ -87,48 +89,49 @@ def scrape_song_bs4(url: str, song_name: str):
         song_tree = get_tree_bs4(url)
     except requests.exceptions.HTTPError:
         return
-    
+
     soup = BeautifulSoup(song_tree, 'html.parser')
     lyrics_divs = soup.find_all('div', class_ = 'lyrics')
 
-    for lyrics_div in lyrics_divs:
-        lyrics_ps = lyrics_div.find_all('p')
-        singlep = True if len(lyrics_ps)==1 else False
+    try:
+        for lyrics_div in lyrics_divs:
+            lyrics_ps = lyrics_div.find_all('p')
+            singlep = True if len(lyrics_ps)==1 else False
 
-        for item in lyrics_ps:
-            em_tags = item.find_all('em')
-            for emt in em_tags:
-                emt.replace_with(emt.text)
-            
-            strong_tags = item.find_all('strong')
-            for strt in strong_tags:
-                strt.replace_with(strt.text)
-            
-            str_item = str(item)[3:-4].replace('<br/>', '&')
-            if str_item[-1] == '&':
-                str_item = str_item[:-1]
-            str_item = re.sub(r'&+', r'&', str_item)
-            str_item = re.sub(r'Ch:', '', str_item)
-            lyrics_rows = str_item.split('&')
+            for item in lyrics_ps:
+                em_tags = item.find_all('em')
+                for emt in em_tags:
+                    emt.replace_with(emt.text)
+                
+                strong_tags = item.find_all('strong')
+                for strt in strong_tags:
+                    strt.replace_with(strt.text)
+                
+                str_item = str(item)[3:-4].replace('<br/>', '&')
+                if str_item[-1] == '&':
+                    str_item = str_item[:-1]
+                str_item = re.sub(r'&+', r'&', str_item)
+                str_item = re.sub(r'Ch:', '', str_item)
+                lyrics_rows = str_item.split('&')
 
-            if singlep:
-                for row in lyrics_rows:
-                    add_to_lyrics(song_lyrics, row.strip())
-            else:
-                for row in lyrics_rows:
-                    if verse == len(song_lyrics):
-                        song_lyrics.append([])
-                    song_lyrics[verse].append(row.strip())
-                verse += 1
+                if singlep:
+                    for row in lyrics_rows:
+                        add_to_lyrics(song_lyrics, row.strip())
+                else:
+                    for row in lyrics_rows:
+                        if verse == len(song_lyrics):
+                            song_lyrics.append([])
+                        song_lyrics[verse].append(row.strip())
+                    verse += 1
+    except IndexError as e:
+        print(f"Error scraping song: {e}")
+        return
 
     if song_lyrics[0]:
-        print(song_name + " has lyrics!")
         shanties[song_name] = song_lyrics
-    else:
-        print(song_name + " has no lyrics.")
 
 
-for i in range(1):
+for i in range(9):
     if i==0:
         tree = get_tree(url)
     else:
@@ -149,5 +152,5 @@ for i in range(1):
         scrape_song_bs4(song_url, song_name)
 
         
-with open('shanties_bs4.json', 'w') as fp:
+with open('shanties_bs4_2.json', 'w') as fp:
     json.dump(shanties, fp)

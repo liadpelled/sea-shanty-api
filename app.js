@@ -17,10 +17,10 @@ try {
 
 const shantySchema = {
     title: String,
-    lyrics: [String]
+    lyrics: [[String]]
 };
 
-const Shanty = mongoose.model("Shanty", shantySchema);
+const Shanty = mongoose.model("Shanty", shantySchema, 'shanties_bs');
 
 app.get("/", function(req, res){
     res.sendFile("public/index.html")
@@ -37,7 +37,7 @@ app.get("/random", (req,res) => {
                 shanty: randomShanty.title,
                 lyrics: randomVerse
             }
-            
+
             res.send(result);
         }
 
