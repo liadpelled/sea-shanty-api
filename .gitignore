@@ -2,5 +2,5 @@
 npm-debug.log
 .DS_Store
 /*.env
-/test.py
-/shanties.json
+test.py
+shanties.json
