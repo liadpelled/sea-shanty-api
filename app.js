@@ -94,8 +94,7 @@ app.get("/shanties", (req,res) => {
         
         return parts.join(" ");
     };
-    var queryTitle = titleCase(queryTitleOriginal)
-    queryTitle = lowerRefWords(queryTitle)
+    var queryTitle = lowerRefWords(titleCase(queryTitleOriginal));
 
     Shanty.findOne({title: queryTitle}, (err, foundShanty) => {
         if (!err){
