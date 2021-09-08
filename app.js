@@ -76,10 +76,6 @@ app.get("/shanties", (req,res) => {
 
     const queryTitleOriginal = req.query.title;
     const titleCase = (str) => map(str.split(" "), (x) => map(x.split("-"), (s) => {
-        lowerCaseWords = ['a', 'at', 'on', 'in', 'to', 'am', 'the', 'with', 'from', 'of', 'your', 'and', 'von', 'la', 'de', 'di', "o'"]
-        if (lowerCaseWords.includes(s)) {
-            return s;
-        }
         if (s[0] == '('){
             return '('+_.capitalize(s.slice(1));
         }
@@ -87,7 +83,19 @@ app.get("/shanties", (req,res) => {
             return _.capitalize(s);
         }
     }).join("-")).join(" ");
-    const queryTitle = titleCase(queryTitleOriginal)
+    const lowerRefWords = (str) => {
+        lowerCaseWords = ['A', 'At', 'On', 'In', 'To', 'Am', 'The', 'With', 'From', 'Of', 'Your', 'And', 'Von', 'La', 'De', 'Di', "O'"]
+        var parts = str.split(" ");
+        for (var i=1; i < parts.length; i++){
+            if (lowerCaseWords.includes(parts[i])){
+                parts[i] = _.lowerCase(parts[i])
+            }
+        }
+        
+        return parts.join(" ");
+    };
+    var queryTitle = titleCase(queryTitleOriginal)
+    queryTitle = lowerRefWords(queryTitle)
 
     Shanty.findOne({title: queryTitle}, (err, foundShanty) => {
         if (!err){
