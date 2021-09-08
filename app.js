@@ -1,8 +1,10 @@
 require('dotenv').config();
 const { text } = require("body-parser");
-const { json } = require('express');
+const { json, query } = require('express');
 const express = require("express");
 const mongoose = require("mongoose");
+const _ = require("lodash");
+const { map } = require('lodash');
 
 const app = express();
 app.use(express.static('public'));
@@ -52,10 +54,12 @@ app.get("/shanties/all", (req,res) => {
 
     Shanty.find({}, (err, foundShanties) => {
         if (!err){
-            var result = []
+            var result = {
+                shanties: []
+            }
 
             foundShanties.forEach((shanty) => {
-                result.push(shanty.title)
+                result.shanties.push(shanty.title)
             })
 
             res.send(result)
@@ -70,14 +74,27 @@ app.get("/shanties/all", (req,res) => {
 
 app.get("/shanties", (req,res) => {
 
-    const queryTitleLower = req.query.title.toLowerCase();
-    const queryTitle = queryTitleLower.replace(/(^|\s)[A-Za-zÀ-ÖØ-öø-ÿ]/g, c => c.toUpperCase());
-    
+    const queryTitleOriginal = req.query.title;
+    const titleCase = (str) => map(str.split(" "), (x) => map(x.split("-"), (s) => {
+        lowerCaseWords = ['a', 'at', 'on', 'in', 'to', 'am', 'the', 'with', 'from', 'of', 'your', 'and', 'von', 'la', 'de', 'di', "o'"]
+        if (lowerCaseWords.includes(s)) {
+            return s;
+        }
+        if (s[0] == '('){
+            return '('+_.capitalize(s.slice(1));
+        }
+        else {
+            return _.capitalize(s);
+        }
+    }).join("-")).join(" ");
+    const queryTitle = titleCase(queryTitleOriginal)
+
     Shanty.findOne({title: queryTitle}, (err, foundShanty) => {
         if (!err){
             if (!foundShanty) {
                 var result = {
-                    error: "No shanty found."
+                    error: "No shanty found.",
+                    title: queryTitle
                 }
                 res.send(result);
             }
