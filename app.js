@@ -41,7 +41,7 @@ app.get("/random", (req,res) => {
                 lyrics: randomVerse
             }
 
-            res.send(result);
+            res.json(result);
         }
 
         else {
@@ -62,7 +62,7 @@ app.get("/shanties/all", (req,res) => {
                 result.shanties.push(shanty.title)
             })
 
-            res.send(result)
+            res.json(result)
         }
 
         else {
@@ -103,7 +103,7 @@ app.get("/shanties", (req,res) => {
                     error: "No shanty found.",
                     title: queryTitle
                 }
-                res.send(result);
+                res.json(result);
             }
             else {
                 var result = {
@@ -111,7 +111,7 @@ app.get("/shanties", (req,res) => {
                     lyrics: foundShanty.lyrics
                 }
 
-                res.send(result);
+                res.json(result);
             }
         }
 
